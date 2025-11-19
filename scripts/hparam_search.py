@@ -114,7 +114,7 @@ def main():
     ap.add_argument('--gpu_ids', default='0')
     ap.add_argument('--save_dir', default='../hparam_ckpts')
     ap.add_argument('--num_slices', type=int, default=32)
-    ap.add_argument('--num_workers', type=int, default=8)
+    ap.add_argument('--num_workers', type=int, default=4)
     ap.add_argument('--fine_tuning_boundary', default='encoders.3')
     ap.add_argument('--include_normals', type=str, default='False')
     ap.add_argument('--resize_shape', default='224,224')

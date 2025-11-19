@@ -14,4 +14,5 @@
   --study_name penet_optuna \
   --trials 50 \
   --search_epochs 40 \
+  --num_workers 4 \
   --direction maximize
