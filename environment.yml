@@ -1,15 +1,13 @@
-name: ctpe
+name: penet_new
 channels:
+  - pytorch
   - conda-forge
   - defaults
-  - pytorch
-  - simpleitk
-
 dependencies:
   # --- Core Frameworks ---
   - python=3.8
   - pytorch=1.10.0
-  - torchvision=0.11.1
+  - torchvision
   - cudatoolkit=11.3
   - pip
 
@@ -25,6 +23,7 @@ dependencies:
   - pillow
   - opencv
   - pywavelets
+  - optuna
 
   # --- Plotting & Utilities ---
   - matplotlib
