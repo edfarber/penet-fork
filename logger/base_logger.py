@@ -97,7 +97,7 @@ class BaseLogger(object):
             # Set pixel_dict to None to bypass visualization
             return 0
 
-        cls_logits = cls_logits.detach().to('cpu')
+        cls_logits = cls_logits.detach().to('cpu').float()
 
         cls_probs = F.sigmoid(cls_logits).numpy()
 

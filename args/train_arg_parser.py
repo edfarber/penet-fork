@@ -49,11 +49,11 @@ class TrainArgParser(BaseArgParser):
         self.parser.add_argument('--dropout_prob', type=float, default=0.0, help='Dropout probability.')
         self.parser.add_argument('--hidden_dim', type=float, default=32,
                                  help='LSTM hidden state size (LRCN only).')
-        self.parser.add_argument('--elastic_transform', type=util.str_to_bool, default=False,
+        self.parser.add_argument('--elastic_transform', type=util.str_to_bool, default=True,
                                  help='Apply elastic transformation to input volume at training time.')
         self.parser.add_argument('--do_hflip', type=util.str_to_bool, default=True,
                                  help='If true, do random horizontal flip during training.')
-        self.parser.add_argument('--do_vflip', type=util.str_to_bool, default=False,
+        self.parser.add_argument('--do_vflip', type=util.str_to_bool, default=True,
                                  help='If true, do random vertical flip during training.')
         self.parser.add_argument('--do_rotate', type=util.str_to_bool, default=True,
                                  help='If true, do random rotation (up to +/- 15 degrees) of the scan during training.')
@@ -75,3 +75,4 @@ class TrainArgParser(BaseArgParser):
                                  help='Initial learning rate for fine-tuning pretrained parameters.')
         self.parser.add_argument('--fine_tuning_boundary', type=str, default='encoders.3',
                                  help='Name of first layer that is not considered a fine-tuning layer.')
+        self.parser.add_argument('--use_amp', type=util.str_to_bool, default=False)

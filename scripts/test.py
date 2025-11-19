@@ -7,7 +7,7 @@ import pickle
 import re
 import util
 
-from ct import CTPE #, CONTRAST_HU_MIN, CONTRAST_HU_MAX
+from ct import CTPE  # , CONTRAST_HU_MIN, CONTRAST_HU_MAX
 from tqdm import tqdm
 
 
@@ -15,6 +15,7 @@ CONTRAST_HU_MIN = -100
 CONTRAST_HU_MAX = 900
 
 def main(args):
+    # Match plain "123.npy"
     study_re = re.compile(r'^(\d+)\.npy$')
     study_paths = []
     ctpes = []
@@ -30,10 +31,11 @@ def main(args):
         info = info.split(',')
         studynum, thicc, label, num_slices, phase, dataset = int(info[0]), float(info[1]), int(info[2]), int(info[3]), info[4], info[5]
         name2info[studynum] = [thicc, label, num_slices, phase, dataset]
-        if slices: 
+        if slices:
             name2slices[studynum] = [int(n) for n in slices.split(',')]
         else:
             name2slices[studynum] = []
+
     # Collect list of paths to studies to convert
     voxel_means = []
     voxel_stds = []
@@ -45,31 +47,48 @@ def main(args):
                 continue
 
             study_num = int(match.group(1))
-            # Thickness must come from the metadata instead of filename:
-            thicc, label, num_slices, phase, dataset = name2info.get(study_num, [None]*5)
 
+            # Pull thickness & metadata from the txt (not the filename)
+            thicc, label, num_slices, phase, dataset = name2info.get(study_num, [None]*5)
             if thicc is None:
                 continue
 
+            # Filter by --use_thicknesses
             if thicc not in args.use_thicknesses:
                 continue
-            if study_num in name2slices:
-                if slice_thickness in args.use_thicknesses:
-                    # Add to list of studies
-                    study_paths.append(os.path.join(base_path, name))
-                    pe_slice_nums = name2slices.get(study_num, [])
-                    thicc, label, num_slices, phase, dataset = name2info[study_num]
-                    print (thicc, label, phase, num_slices)
-                    if thicc != slice_thickness:
-                        print ('Thickness issue with file', name)
-                    ctpes.append(CTPE(study_num, slice_thickness, pe_slice_nums, num_slices, dataset, is_positive=label, phase=phase))
 
+            if study_num in name2slices:
+                # Add to list of studies
+                full_path = os.path.join(base_path, name)
+                study_paths.append(full_path)
+                pe_slice_nums = name2slices.get(study_num, [])
+                print(thicc, label, phase, num_slices)
+                ctpes.append(
+                    CTPE(
+                        study_num,
+                        thicc,  # use txt-provided thickness
+                        pe_slice_nums,
+                        num_slices,
+                        dataset,
+                        is_positive=label,
+                        phase=phase
+                    )
+                )
+
+                # (Optional) compute normalization stats later if you want:
+                # vol = np.load(full_path)
+                # get_mean_std(vol, voxel_means, voxel_stds)
+
+    os.makedirs(args.output_dir, exist_ok=True)
     with open(os.path.join(args.output_dir, 'series_list.pkl'), 'wb') as pkl_fh:
         pickle.dump(ctpes, pkl_fh)
 
     print('Wrote {} studies'.format(len(study_paths)))
-    print('Mean {}'.format(np.mean(voxel_means)))
-    print('Std {}'.format(np.mean(voxel_stds)))
+    if voxel_means and voxel_stds:
+        print('Mean {}'.format(np.mean(voxel_means)))
+        print('Std {}'.format(np.mean(voxel_stds)))
+    else:
+        print('Mean/Std not computed (no volumes loaded for stats).')
 
 
 def get_mean_std(scan, means, stds):
@@ -100,3 +119,4 @@ if __name__ == '__main__':
     args_.use_thicknesses = util.args_to_list(args_.use_thicknesses, arg_type=float, allow_empty=False)
 
     main(args_)
+
