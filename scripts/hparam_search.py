@@ -46,6 +46,8 @@ def build_trial_arg_list(base_args, trial):
     sampled['dropout_prob'] = trial.suggest_float('dropout_prob', 0.0, 0.4)
     sampled['abnormal_prob'] = trial.suggest_float('abnormal_prob', 0.3, 0.7)
     sampled['batch_size'] = trial.suggest_categorical('batch_size', [4, 6, 8])
+    sampled['iters_per_print'] = sampled['batch_size'] * 4
+    sampled['iters_per_visual'] = sampled['batch_size'] * 20
     sampled['fine_tuning_lr'] = trial.suggest_float('fine_tuning_lr', 0.0, 1e-4)
     sampled['use_hem'] = str(trial.suggest_categorical('use_hem', [True, False]))
 
