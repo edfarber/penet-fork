@@ -8,3 +8,4 @@ results/
 logs/
 venv/
 *.pth.tar
+*.db
