@@ -134,7 +134,11 @@ def main():
     os.makedirs(base_args.save_dir, exist_ok=True)
 
     def objective(trial):
-        torch.cuda.empty_cache()
+        if torch.cuda.is_available():
+            try:
+                torch.cuda.empty_cache()
+            except RuntimeError:
+                pass
         return train_one_trial(base_args, trial)
 
     study = optuna.create_study(

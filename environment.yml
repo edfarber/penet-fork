@@ -6,10 +6,10 @@ channels:
   - defaults
 dependencies:
   # --- Core Frameworks ---
-  - python=3.6
-  - pytorch=0.4.1
-  - torchvision=0.2.0
-  - tensorflow=1.4.0
+  - python=3.8
+  - pytorch=1.10.0
+  - torchvision=0.11.1
+  - cudatoolkit=11.3
   - pip
 
   # --- Scientific & Data Handling ---

@@ -15,4 +15,5 @@
   --trials 50 \
   --search_epochs 40 \
   --num_workers 4 \
+  --gpu_ids -1 \
   --direction maximize
