@@ -1,9 +1,10 @@
 name: ctpe
 channels:
-  - pytorch
-  - simpleitk
   - conda-forge
   - defaults
+  - pytorch
+  - simpleitk
+  
 dependencies:
   # --- Core Frameworks ---
   - python=3.8
