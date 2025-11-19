@@ -47,6 +47,7 @@ class TrainArgParser(BaseArgParser):
         self.parser.add_argument('--weight_decay', type=float, default=5e-4,
                                  help='Weight decay (i.e., L2 regularization factor).')
         self.parser.add_argument('--dropout_prob', type=float, default=0.0, help='Dropout probability.')
+        self.parser.add_argument('--focal_gamma', type=float, default=2.0, help='Gamma for Focal Loss.')
         self.parser.add_argument('--hidden_dim', type=float, default=32,
                                  help='LSTM hidden state size (LRCN only).')
         self.parser.add_argument('--elastic_transform', type=util.str_to_bool, default=True,
