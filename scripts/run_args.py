@@ -9,10 +9,12 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
+import sys
+
 def run_args(args, email_recipient=None):
 
     # Build command from args
-    cmd = ['python', 'train.py']
+    cmd = [sys.executable, 'train.py']
     cmd += ['--{}={}'.format(k, v) for k, v in args.items()]
 
     # Spawn process to run the args
