@@ -58,6 +58,13 @@ def main():
     cmd.append(f'--data_dir={args.data_dir}')
     cmd.append(f'--phase={args.phase}')
     
+    # Handle pkl_path default logic
+    pkl_path = config.get('pkl_path', '')
+    if not pkl_path:
+        pkl_path = os.path.join(args.data_dir, 'series_list.pkl')
+        print(f"pkl_path not specified in config, defaulting to: {pkl_path}")
+    cmd.append(f'--pkl_path={pkl_path}')
+    
     # Handle GPU IDs
     if args.gpu_ids is not None:
         cmd.append(f'--gpu_ids={args.gpu_ids}')
