@@ -296,17 +296,7 @@ class CTPEDataset3d(BaseCTDataset):
 
         if self.do_rotate:
             angle = random.randint(-15, 15)
-            # inputs = rotate(inputs, angle, (-2, -1), reshape=False, cval=AIR_HU_VAL)
-            # Optimization: Use OpenCV for rotation
-            height, width = inputs.shape[-2], inputs.shape[-1]
-            center = (width // 2, height // 2)
-            M = cv2.getRotationMatrix2D(center, angle, 1.0)
-            
-            rotated_slices = []
-            for i in range(inputs.shape[0]):
-                rotated_slice = cv2.warpAffine(inputs[i], M, (width, height), borderValue=AIR_HU_VAL)
-                rotated_slices.append(rotated_slice)
-            inputs = np.array(rotated_slices)
+            inputs = rotate(inputs, angle, (-2, -1), reshape=False, cval=AIR_HU_VAL)
 
         # Normalize raw Hounsfield Units
         inputs = self._normalize_raw(inputs)

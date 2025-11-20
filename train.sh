@@ -23,11 +23,12 @@
                 --epochs_per_save=1 \
                 --fine_tune=True \
                 --fine_tuning_boundary=classifier \
-                --fine_tuning_lr=1e-2 \
+                --fine_tuning_lr=1e-4 \
                 --gpu_ids=0 \
                 --include_normals=True \
                 --iters_per_print=32 \
                 --iters_per_visual=8000 \
+                --use_amp=True \
                 --num_workers=8 \
                 --learning_rate=5e-3 \
                 --lr_decay_step=600000 \
@@ -36,7 +37,7 @@
                 --model=PENetClassifier \
                 --model_depth=50 \
                 --num_classes=1 \
-                --num_epochs=1 \
+                --num_epochs=10 \
                 --num_slices=24 \
                 --num_visuals=8 \
                 --num_workers=8 \
