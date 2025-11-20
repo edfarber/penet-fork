@@ -2,36 +2,34 @@ name: penet_new
 channels:
   - pytorch
   - conda-forge
-  - defaults
 dependencies:
   - python=3.8
   - pytorch=1.10.0
-  - torchvision
+  - torchvision=0.11.1
   - cudatoolkit=11.3
-  - pip
+  - numpy
+  - scipy
+  - pandas
+  - scikit-learn
+  - scikit-image
+  - h5py
+  - pillow
+  - opencv
+  - matplotlib
+  - tqdm
+  - imageio
+  - requests
+  - seaborn
+  - jupyter
+  - notebook
+  - ipykernel
+  - ipython
   - pip:
-    - numpy
-    - scipy
-    - pandas
-    - scikit-learn
-    - scikit-image
-    - simpleitk
-    - pydicom
-    - h5py
-    - pillow
-    - opencv-python
-    - pywavelets
-    - optuna
-    - matplotlib
-    - tqdm
-    - imageio
-    - requests
-    - seaborn
-    - jupyter
-    - notebook
-    - ipykernel
-    - ipython
-    - tensorboardx
-    - lime
-    - moviepy
-    - shap
+      - simpleitk
+      - pydicom
+      - pywavelets
+      - optuna
+      - tensorboardx
+      - lime
+      - moviepy
+      - shap
