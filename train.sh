@@ -1,6 +1,7 @@
 #!/bin/sh
 #SBATCH -N 1
-#SBATCH -n 4
+#SBATCH -n 1
+#SBATCH -c 8
 #SBATCH --mem=64G
 #SBATCH -t 4:00:00
 #SBATCH -p gpu --gres=gpu:1
@@ -27,6 +28,7 @@
                 --include_normals=True \
                 --iters_per_print=32 \
                 --iters_per_visual=8000 \
+                --num_workers=8 \
                 --learning_rate=5e-3 \
                 --lr_decay_step=600000 \
                 --lr_scheduler=cosine_warmup \
