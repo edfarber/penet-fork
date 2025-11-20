@@ -532,8 +532,9 @@ def get_plot(title, curve):
 
     fig.canvas.draw()
 
-    curve_img = np.fromstring(fig.canvas.tostring_rgb(), dtype=np.uint8, sep='')
-    curve_img = curve_img.reshape(fig.canvas.get_width_height()[::-1] + (3,))
+    width, height = fig.canvas.get_width_height()
+    curve_img = np.frombuffer(fig.canvas.buffer_rgba(), dtype=np.uint8)
+    curve_img = curve_img.reshape((height, width, 4))[:, :, :3]
 
     return curve_img
 
