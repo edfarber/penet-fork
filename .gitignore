@@ -9,3 +9,5 @@ logs/
 venv/
 *.pth.tar
 *.db
+.venv/*
+*.edu
