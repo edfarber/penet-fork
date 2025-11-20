@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import util
 
+from torch.cuda.amp import autocast, GradScaler
 from args import TrainArgParser
 from evaluator import ModelEvaluator
 from logger import TrainLogger
@@ -54,6 +55,9 @@ def train(args):
                                args.agg_method, args.num_visuals, args.max_eval, args.epochs_per_eval)
     saver = ModelSaver(args.save_dir, args.epochs_per_save, args.max_ckpts, args.best_ckpt_metric, args.maximize_metric)
 
+    # Initialize GradScaler
+    scaler = GradScaler(enabled=args.use_amp)
+
     # Train model
     last_metrics = None
     while not logger.is_finished_training():
@@ -64,16 +68,19 @@ def train(args):
             
             with torch.set_grad_enabled(True):
                 inputs = inputs.to(args.device)
-                cls_logits = model.forward(inputs)
-                cls_targets = target_dict['is_abnormal']
-                cls_loss = cls_loss_fn(cls_logits, cls_targets.to(args.device))
-                loss = cls_loss.mean()
+                
+                with autocast(enabled=args.use_amp):
+                    cls_logits = model.forward(inputs)
+                    cls_targets = target_dict['is_abnormal']
+                    cls_loss = cls_loss_fn(cls_logits, cls_targets.to(args.device))
+                    loss = cls_loss.mean()
 
                 logger.log_iter(inputs, cls_logits, target_dict, cls_loss.mean(), optimizer)
 
                 optimizer.zero_grad()
-                loss.backward()
-                optimizer.step()
+                scaler.scale(loss).backward()
+                scaler.step(optimizer)
+                scaler.update()
 
             logger.end_iter()
             util.step_scheduler(lr_scheduler, global_step=logger.global_step)

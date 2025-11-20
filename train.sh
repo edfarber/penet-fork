@@ -6,7 +6,7 @@
 #SBATCH -p gpu --gres=gpu:1
 #SBATCH -o /users/edfarber/train.log
 
-/users/edfarber/miniconda3/envs/tf14/bin/python3 train.py --data_dir=/users/edfarber/scratch/dataset/multimodalpulmonaryembolismdataset/0/ \
+/users/edfarber/scratch/penet-fork/.venv/bin/python train.py --data_dir=/users/edfarber/scratch/dataset/multimodalpulmonaryembolismdataset/0/ \
                 --ckpt_path=/users/edfarber/scratch/penet/xnet_kin_90.pth.tar \
                 --save_dir=/users/edfarber/train_logs \
 		--name=Test3 \
@@ -15,7 +15,7 @@
                 --batch_size=16 \
                 --best_ckpt_metric=val_AUROC \
                 --crop_shape=192,192 \
-                --cudnn_benchmark=False \
+                --cudnn_benchmark=True \
                 --dataset=pe \
                 --do_classify=True \
                 --epochs_per_eval=1 \
@@ -37,7 +37,7 @@
                 --num_epochs=1 \
                 --num_slices=24 \
                 --num_visuals=8 \
-                --num_workers=4 \
+                --num_workers=8 \
                 --optimizer=adam \
                 --pe_types='["central", "segmental"]' \
                 --resize_shape=208,208 \

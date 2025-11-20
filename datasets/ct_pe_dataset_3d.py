@@ -34,6 +34,8 @@ class CTPEDataset3d(BaseCTDataset):
         self.do_jitter = self.is_training_set and args.do_jitter
         self.do_center_abnormality = self.is_training_set and args.do_center_pe
 
+        self.hdf5_fh = None
+
         self.threshold_size = args.threshold_size
         self.pixel_dict = {
             'min_val': CONTRAST_HU_MIN,
@@ -192,8 +194,10 @@ class CTPEDataset3d(BaseCTDataset):
         if self.img_format == 'png':
             raise NotImplementedError('No support for PNGs in our HDF5 files.')
 
-        with h5py.File(os.path.join(self.data_dir, 'data.hdf5'), 'r') as hdf5_fh:
-            volume = hdf5_fh[str(ctpe.study_num)][start_idx:start_idx + self.num_slices]
+        if self.hdf5_fh is None:
+            self.hdf5_fh = h5py.File(os.path.join(self.data_dir, 'data.hdf5'), 'r')
+
+        volume = self.hdf5_fh[str(ctpe.study_num)][start_idx:start_idx + self.num_slices]
 
         return volume
 
@@ -292,7 +296,17 @@ class CTPEDataset3d(BaseCTDataset):
 
         if self.do_rotate:
             angle = random.randint(-15, 15)
-            inputs = rotate(inputs, angle, (-2, -1), reshape=False, cval=AIR_HU_VAL)
+            # inputs = rotate(inputs, angle, (-2, -1), reshape=False, cval=AIR_HU_VAL)
+            # Optimization: Use OpenCV for rotation
+            height, width = inputs.shape[-2], inputs.shape[-1]
+            center = (width // 2, height // 2)
+            M = cv2.getRotationMatrix2D(center, angle, 1.0)
+            
+            rotated_slices = []
+            for i in range(inputs.shape[0]):
+                rotated_slice = cv2.warpAffine(inputs[i], M, (width, height), borderValue=AIR_HU_VAL)
+                rotated_slices.append(rotated_slice)
+            inputs = np.array(rotated_slices)
 
         # Normalize raw Hounsfield Units
         inputs = self._normalize_raw(inputs)
