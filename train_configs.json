@@ -49,7 +49,7 @@
     "name": "Test3_BestParams",
     "num_channels": 3,
     "num_classes": 1,
-    "num_epochs": 1,
+    "num_epochs": 50,
     "num_slices": 32,
     "num_visuals": 4,
     "num_workers": 8,
@@ -71,7 +71,8 @@
     "toy_size": 5,
     "use_amp": true,
     "use_hem": true,
-    "use_pretrained": false,
+    "use_pretrained": true,
+    "ckpt_path": "/users/edfarber/scratch/penet/xnet_kin_90.pth.tar",
     "vstep_size": 1,
     "weight_decay": 1.2027098949659767e-05
 }
