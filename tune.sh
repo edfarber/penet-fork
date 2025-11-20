@@ -6,7 +6,7 @@
 #SBATCH -p gpu --gres=gpu:1
 #SBATCH -o /users/edfarber/tune.log
 
-/users/edfarber/miniconda3/envs/tf14/bin/python3 scripts/hparam_search.py \
+/users/edfarber/miniconda3/envs/penet_new/bin/python scripts/hparam_search.py \
   --data_dir /users/edfarber/scratch/dataset/multimodalpulmonaryembolismdataset/0/ \
   --dataset pe \
   --name penet_search \

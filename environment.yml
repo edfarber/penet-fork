@@ -4,42 +4,33 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  # --- Core Frameworks ---
   - python=3.8
   - pytorch=1.10.0
   - torchvision
   - cudatoolkit=11.3
   - pip
-
-  # --- Scientific & Data Handling ---
-  - numpy
-  - scipy
-  - pandas
-  - scikit-learn
-  - scikit-image
-  - simpleitk
-  - pydicom
-  - h5py
-  - pillow
-  - opencv
-  - pywavelets
-  - optuna
-
-  # --- Plotting & Utilities ---
-  - matplotlib
-  - tqdm
-  - imageio
-  - requests
-  - seaborn
-
-  # --- Jupyter & IPython ---
-  - jupyter
-  - notebook
-  - ipykernel
-  - ipython
-
-  # --- Pip-specific packages ---
   - pip:
+    - numpy
+    - scipy
+    - pandas
+    - scikit-learn
+    - scikit-image
+    - simpleitk
+    - pydicom
+    - h5py
+    - pillow
+    - opencv-python
+    - pywavelets
+    - optuna
+    - matplotlib
+    - tqdm
+    - imageio
+    - requests
+    - seaborn
+    - jupyter
+    - notebook
+    - ipykernel
+    - ipython
     - tensorboardx
     - lime
     - moviepy
