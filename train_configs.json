@@ -49,7 +49,7 @@
     "name": "Test3_BestParams",
     "num_channels": 3,
     "num_classes": 1,
-    "num_epochs": 50,
+    "num_epochs": 15,
     "num_slices": 32,
     "num_visuals": 4,
     "num_workers": 8,

@@ -15,7 +15,7 @@ DATA_DIR=/users/edfarber/scratch/dataset/multimodalpulmonaryembolismdataset/0/
 
 # Path to the checkpoint you want to test
 # IMPORTANT: Update this to point to the specific checkpoint you want to evaluate!
-CKPT_PATH=/users/edfarber/train_logs/Baseline_20251113_034716/best.pth.tar
+CKPT_PATH=/users/edfarber/train_logs/Test3_BestParams_20251120_021646/best.pth.tar
 
 # Run the test using the config wrapper to ensure correct preprocessing
 $PYTHON_EXEC scripts/run_test_with_config.py train_configs.json \

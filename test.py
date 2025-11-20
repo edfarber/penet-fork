@@ -76,11 +76,17 @@ def test(args):
                                                               key=lambda slice_and_prob: slice_and_prob[0])))
         study2slices[study_num] = slice_list
         study2probs[study_num] = prob_list
-        max_prob = max(prob_list)
-        max_probs.append(max_prob)
+        # Aggregate window probabilities to a series-level score
+        agg = (args.agg_method if hasattr(args, 'agg_method') and args.agg_method else 'max')
+        if agg == 'mean':
+            series_prob = float(np.mean(prob_list))
+        else:
+            # Default to max to preserve existing behavior
+            series_prob = float(np.max(prob_list))
+        max_probs.append(series_prob)
         label = study2labels[study_num]
         labels.append(label)
-        predictions[study_num] = {'label':label, 'pred':max_prob}
+        predictions[study_num] = {'label': label, 'pred': series_prob}
 
     #Save predictions to file, indexed by study number
     print("Save to pickle")
