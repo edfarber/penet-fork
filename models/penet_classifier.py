@@ -94,7 +94,7 @@ class PENetClassifier(nn.Module):
 
     def args_dict(self):
         """Get a dictionary of args that can be used to reconstruct this architecture.
-        To use the returned dict, initialize the model with `PENet(**model_args)`.
+        To use the returned dict, initialize the model with `PENetClassifier(**model_args)`.
         """
         model_args = {
             'model_depth': self.model_depth,
