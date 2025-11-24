@@ -42,7 +42,7 @@ class BaseArgParser(object):
         self.parser.add_argument('--num_slices', default=32, type=int, help='Number of slices to use per study.')
         self.parser.add_argument('--num_visuals', type=int, default=4,
                                  help='Maximum number of visuals per evaluation.')
-        self.parser.add_argument('--num_workers', default=4, type=int, help='Number of threads for the DataLoader.')
+        self.parser.add_argument('--num_workers', default=8, type=int, help='Number of threads for the DataLoader.')
         self.parser.add_argument('--agg_method', type=str, default='', choices=('max', 'mean', 'logreg', ''),
                                  help='Method for aggregating window-level predictions to a single prediction.')
         self.parser.add_argument('--save_dir', type=str, default='../ckpts/',

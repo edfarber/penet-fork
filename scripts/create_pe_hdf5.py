@@ -7,15 +7,12 @@ import pickle
 import re
 import util
 
-from ct import CTPE #, CONTRAST_HU_MIN, CONTRAST_HU_MAX
+from ct import CTPE, CONTRAST_HU_MIN, CONTRAST_HU_MAX
 from tqdm import tqdm
 
 
-CONTRAST_HU_MIN = -100
-CONTRAST_HU_MAX = 900
-
 def main(args):
-    study_re = re.compile(r'^(\d+)\.npy$')
+    study_re = re.compile(r'(\d+)_(\d\.\d\d)')
     study_paths = []
     ctpes = []
 
@@ -43,16 +40,7 @@ def main(args):
             match = study_re.match(name)
             if not match:
                 continue
-
-            study_num = int(match.group(1))
-            # Thickness must come from the metadata instead of filename:
-            thicc, label, num_slices, phase, dataset = name2info.get(study_num, [None]*5)
-
-            if thicc is None:
-                continue
-
-            if thicc not in args.use_thicknesses:
-                continue
+            study_num, slice_thickness = int(match.group(1)), float(match.group(2))
             if study_num in name2slices:
                 if slice_thickness in args.use_thicknesses:
                     # Add to list of studies
@@ -84,16 +72,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create HDF5 file for PE')
 
     parser.add_argument('--data_dir', type=str,
-                        default='/users/edfarber/scratch/dataset/multimodalpulmonaryembolismdataset/0/',
+                        default='/deep/group/aihc-bootcamp-winter2018/medical-imaging/ct_chest_pe/data-final/images',
                         help='Base directory for loading 3D volumes.')
     parser.add_argument('--slice_list', type=str,
-                        default='/users/edfarber/scratch/penet/test.txt')
+                        default='/deep/group/aihc-bootcamp-winter2018/medical-imaging/ct_chest_pe/tanay_data_12_4_clean/slice_list_12_4_clean.txt')
     parser.add_argument('--use_thicknesses', default='1.25', type=str,
                         help='Comma-separated list of thicknesses to use.')
     parser.add_argument('--hu_intercept', type=float, default=-1024,
                         help='Intercept for converting from original numpy files to HDF5 (probably -1024).')
     parser.add_argument('--output_dir', type=str,
-                        default='/users/edfarber/scratch/dataset/multimodalpulmonaryembolismdataset/0/',
+                        default='/deep/group/aihc-bootcamp-winter2018/medical-imaging/ct_chest_pe/tanay_data_12_4_clean',
                         help='Output directory for HDF5 file and pickle file.')
 
     args_ = parser.parse_args()

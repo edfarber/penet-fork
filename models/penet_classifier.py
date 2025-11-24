@@ -94,7 +94,7 @@ class PENetClassifier(nn.Module):
 
     def args_dict(self):
         """Get a dictionary of args that can be used to reconstruct this architecture.
-        To use the returned dict, initialize the model with `PENetClassifier(**model_args)`.
+        To use the returned dict, initialize the model with `PENet(**model_args)`.
         """
         model_args = {
             'model_depth': self.model_depth,
@@ -112,8 +112,8 @@ class PENetClassifier(nn.Module):
         Adapted from:
             https://discuss.pytorch.org/t/how-to-load-part-of-pre-trained-model/1113/2
         """
-        # Always load to CPU first to avoid CUDA device mismatch, then move to target device
-        pretrained_dict = torch.load(ckpt_path, map_location='cpu')['model_state']
+        device = 'cuda:{}'.format(gpu_ids[0]) if len(gpu_ids) > 0 else 'cpu'
+        pretrained_dict = torch.load(ckpt_path, map_location=device)['model_state']
         model_dict = self.state_dict()
         
         ############ Rename the parameters' name in the pretrained checkpoint #########

@@ -96,7 +96,7 @@ def linear_warmup_then_cosine(last_iter, warmup, max_iter, delay=None):
 def step_scheduler(lr_scheduler, metrics=None, epoch=None, global_step=None, best_ckpt_metric='val_loss'):
     """Step a LR scheduler."""
     if isinstance(lr_scheduler, optim.lr_scheduler.ReduceLROnPlateau):
-        if metrics is not None and best_ckpt_metric in metrics:
+        if best_ckpt_metric in metrics:
             lr_scheduler.step(metrics[best_ckpt_metric], epoch=epoch)
     elif isinstance(lr_scheduler, optim.lr_scheduler.LambdaLR):
         # LambdaLR gets stepped once per iteration

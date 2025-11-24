@@ -17,6 +17,6 @@ def npy2hdf5(data_dir, output_dir):
 
 
 if __name__ == "__main__":
-    data_dir = Path("/users/edfarber/scratch/dataset/multimodalpulmonaryembolismdataset/0/")
-    output_dir = "/users/edfarber/scratch/dataset/multimodalpulmonaryembolismdataset/0/"
+    data_dir = Path("")
+    output_dir = ""
     npy2hdf5(data_dir, output_dir)

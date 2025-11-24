@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import util
 
-from torch.cuda.amp import autocast, GradScaler
 from args import TrainArgParser
 from evaluator import ModelEvaluator
 from logger import TrainLogger
@@ -23,11 +22,6 @@ def train(args):
             model.load_pretrained(args.ckpt_path, args.gpu_ids)
         model = nn.DataParallel(model, args.gpu_ids)
     model = model.to(args.device)
-    print(f"Training on device: {args.device}")
-    print(f"CUDA available: {torch.cuda.is_available()}")
-    if torch.cuda.is_available():
-        print(f"Current device: {torch.cuda.current_device()}")
-        print(f"Device name: {torch.cuda.get_device_name(0)}")
     model.train()
 
     # Get optimizer and scheduler
@@ -41,12 +35,7 @@ def train(args):
         ModelSaver.load_optimizer(args.ckpt_path, optimizer, lr_scheduler)
 
     # Get logger, evaluator, saver
-    # Use focal_gamma from args for BinaryFocalLoss tuning when PE dataset
-    if args.dataset == 'KineticsDataset':
-        cls_loss_fn = util.get_loss_fn(is_classification=True, dataset=args.dataset, size_average=False)
-    else:
-        from models.loss.focal_loss import BinaryFocalLoss
-        cls_loss_fn = BinaryFocalLoss(gamma=args.focal_gamma, size_average=False)
+    cls_loss_fn = util.get_loss_fn(is_classification=True, dataset=args.dataset, size_average=False)
     data_loader_fn = data_loader.__dict__[args.data_loader]
     train_loader = data_loader_fn(args, phase='train', is_training=True)
     logger = TrainLogger(args, len(train_loader.dataset), train_loader.dataset.pixel_dict)
@@ -55,11 +44,7 @@ def train(args):
                                args.agg_method, args.num_visuals, args.max_eval, args.epochs_per_eval)
     saver = ModelSaver(args.save_dir, args.epochs_per_save, args.max_ckpts, args.best_ckpt_metric, args.maximize_metric)
 
-    # Initialize GradScaler
-    scaler = GradScaler(enabled=args.use_amp)
-
     # Train model
-    last_metrics = None
     while not logger.is_finished_training():
         logger.start_epoch()
 
@@ -67,32 +52,26 @@ def train(args):
             logger.start_iter()
             
             with torch.set_grad_enabled(True):
-                inputs = inputs.to(args.device)
-                
-                with autocast(enabled=args.use_amp):
-                    cls_logits = model.forward(inputs)
-                    cls_targets = target_dict['is_abnormal']
-                    cls_loss = cls_loss_fn(cls_logits, cls_targets.to(args.device))
-                    loss = cls_loss.mean()
+                inputs.to(args.device)
+                cls_logits = model.forward(inputs)
+                cls_targets = target_dict['is_abnormal']
+                cls_loss = cls_loss_fn(cls_logits, cls_targets.to(args.device))
+                loss = cls_loss.mean()
 
                 logger.log_iter(inputs, cls_logits, target_dict, cls_loss.mean(), optimizer)
 
                 optimizer.zero_grad()
-                scaler.scale(loss).backward()
-                scaler.step(optimizer)
-                scaler.update()
+                loss.backward()
+                optimizer.step()
 
             logger.end_iter()
             util.step_scheduler(lr_scheduler, global_step=logger.global_step)
 
         metrics, curves = evaluator.evaluate(model, args.device, logger.epoch)
-        last_metrics = metrics
         saver.save(logger.epoch, model, optimizer, lr_scheduler, args.device,
                    metric_val=metrics.get(args.best_ckpt_metric, None))
         logger.end_epoch(metrics, curves)
         util.step_scheduler(lr_scheduler, metrics, epoch=logger.epoch, best_ckpt_metric=args.best_ckpt_metric)
-
-    return last_metrics
 
 
 if __name__ == '__main__':

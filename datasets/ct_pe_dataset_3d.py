@@ -34,8 +34,6 @@ class CTPEDataset3d(BaseCTDataset):
         self.do_jitter = self.is_training_set and args.do_jitter
         self.do_center_abnormality = self.is_training_set and args.do_center_pe
 
-        self.hdf5_fh = None
-
         self.threshold_size = args.threshold_size
         self.pixel_dict = {
             'min_val': CONTRAST_HU_MIN,
@@ -194,10 +192,8 @@ class CTPEDataset3d(BaseCTDataset):
         if self.img_format == 'png':
             raise NotImplementedError('No support for PNGs in our HDF5 files.')
 
-        if self.hdf5_fh is None:
-            self.hdf5_fh = h5py.File(os.path.join(self.data_dir, 'data.hdf5'), 'r')
-
-        volume = self.hdf5_fh[str(ctpe.study_num)][start_idx:start_idx + self.num_slices]
+        with h5py.File(os.path.join(self.data_dir, 'data.hdf5'), 'r') as hdf5_fh:
+            volume = hdf5_fh[str(ctpe.study_num)][start_idx:start_idx + self.num_slices]
 
         return volume
 
